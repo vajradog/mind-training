@@ -9,4 +9,17 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-Eightverses::Application.config.secret_key_base = 'e51fea32a4a6358050dbd2fcb0131ef02c7ae7a610a9228a1ddc86e5004b1c11eb1286c350f5746ddcc60f0205206192ed0a8ef4926afde5b36e670754f05a2a'
+def secure_token
+  token_file = Rails.root.join('.secret')
+  if File.exist?(token_file)
+    # Use the existing token.
+    File.read(token_file).chomp
+  else
+    # Generate a new token and store it in token_file.
+    token = SecureRandom.hex(64)
+    File.write(token_file, token)
+    token
+  end
+end
+
+Eightverses::Application.config.secret_key_base = secure_token
